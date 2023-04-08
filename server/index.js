@@ -77,6 +77,16 @@ async function startServer() {
       res.json(posts);
     });
 
+    app.get("/api/data/top", async (req, res) => {
+      const collection = db.collection(collectionName);
+      const posts = await collection
+        .find({})
+        .sort({ upvotes: -1 })
+        .limit(10)
+        .toArray();
+      res.json(posts);
+    });
+
     app.get("/api/data/:news_id/upvote", async (req, res) => {
       const news_id = req.params.news_id;
       const collection = db.collection(collectionName);
