@@ -82,7 +82,7 @@ async function startServer() {
       const posts = await collection
         .find({})
         .sort({ upvotes: -1 })
-        .limit(50)
+        .limit(25)
         .toArray();
       res.json(posts);
     });
@@ -92,7 +92,7 @@ async function startServer() {
       const posts = await collection
         .find({})
         .sort({ upvotes: -1 })
-        .limit(20)
+        .limit(10)
         .toArray();
       res.json(posts);
     });
