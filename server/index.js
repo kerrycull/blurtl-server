@@ -38,7 +38,7 @@ async function fetchAndSaveNewPosts(db) {
           url: post.news_url,
           upvotes: 0,
           downvotes: 0,
-          date: post.date,
+          date: new Date(),
         });
         console.log(`Inserted new post with id ${post.news_id}`);
       }
