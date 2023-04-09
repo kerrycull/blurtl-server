@@ -82,7 +82,17 @@ async function startServer() {
       const posts = await collection
         .find({})
         .sort({ upvotes: -1 })
-        .limit(100)
+        .limit(50)
+        .toArray();
+      res.json(posts);
+    });
+
+    app.get("/api/data/rising", async (req, res) => {
+      const collection = db.collection(collectionName);
+      const posts = await collection
+        .find({})
+        .sort({ upvotes: -1 })
+        .limit(20)
         .toArray();
       res.json(posts);
     });
