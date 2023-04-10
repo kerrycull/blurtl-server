@@ -91,7 +91,7 @@ async function startServer() {
       const collection = db.collection(collectionName);
       const posts = await collection
         .find({})
-        .sort({ news_id: -1, upvotes: -1 })
+        .sort({ upvotes: -1, news_id: -1 })
         .limit(10)
         .toArray();
       res.json(posts);
