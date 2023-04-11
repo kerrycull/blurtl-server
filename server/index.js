@@ -79,19 +79,23 @@ async function startServer() {
 
     app.get("/api/data/top", async (req, res) => {
       const collection = db.collection(collectionName);
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3); // set the date to 3 days ago
       const posts = await collection
-        .find({})
+        .find({ date: { $gte: threeDaysAgo } }) // filter for posts with date greater than or equal to three days ago
         .sort({ upvotes: -1 })
-        .limit(25)
+        .limit(10)
         .toArray();
       res.json(posts);
     });
 
     app.get("/api/data/rising", async (req, res) => {
       const collection = db.collection(collectionName);
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(threeDaysAgo.getDate() - 1); // set the date to 1 day ago
       const posts = await collection
-        .find({})
-        .sort({ upvotes: -1, news_id: -1 })
+        .find({ date: { $gte: oneDayAgo } }) // filter for posts with date greater than or equal to 1 day ago
+        .sort({ upvotes: -1 })
         .limit(10)
         .toArray();
       res.json(posts);
