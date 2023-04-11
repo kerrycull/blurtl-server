@@ -80,7 +80,7 @@ async function startServer() {
     app.get("/api/data/top", async (req, res) => {
       const collection = db.collection(collectionName);
       const posts = await collection
-        .find({})
+        .find({ date: date.getDay(new Date().getDay()) })
         .sort({ upvotes: -1 })
         .limit(25)
         .toArray();
