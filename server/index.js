@@ -92,7 +92,7 @@ async function startServer() {
     app.get("/api/data/rising", async (req, res) => {
       const collection = db.collection(collectionName);
       const oneDayAgo = new Date();
-      oneDayAgo.setDate(threeDaysAgo.getDate() - 1); // set the date to 1 day ago
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1); // set the date to 1 day ago
       const posts = await collection
         .find({ date: { $gte: oneDayAgo } }) // filter for posts with date greater than or equal to 1 day ago
         .sort({ upvotes: -1 })
