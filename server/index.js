@@ -4,7 +4,7 @@ const cors = require("cors");
 const axios = require("axios");
 const mongoose = require("mongoose");
 require("dotenv").config({ path: "./config.env" });
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 app.use(require("./routes/record"));
@@ -101,38 +101,132 @@ async function startServer() {
       res.json(posts);
     });
 
-    app.get("/api/data/:news_id/upvote", async (req, res) => {
+    app.post("/api/data/:news_id/upvote", async (req, res) => {
       const news_id = req.params.news_id;
+      const user_id = req.body.user_id;
       const collection = db.collection(collectionName);
+      const votesCollection = db.collection("votes");
 
       //console.log(req.params.news_id);
 
       // Find the post with the given news_id and increment its upvotes by 1
-      const result = await collection.updateOne(
-        { news_id: parseInt(req.params.news_id) },
-        { $inc: { upvotes: 1 } }
-      );
+      const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
 
-      console.log(`Matched ${result.matchedCount} documents`);
-      console.log(`Modified ${result.modifiedCount} documents`);
+      if (!find) {
+        try {
+          console.log("not found");
+          const result = await collection.updateOne(
+            { news_id: parseInt(req.params.news_id) },
+            { $inc: { upvotes: 1 } }
+          );
+          const result2 = await votesCollection.insertOne({
+            news_id: parseInt(req.params.news_id),
+            user_id: user_id,
+            vote: "upvote",
+          });
+        } catch (error) {
+          console.log(error);
+        }
+        res.send(`upvote`);
+      }
 
-      res.send(`Post ${news_id} upvoted successfully`);
+      if (find && find.vote === "downvote") {
+        console.log("downvote")
+        const result = await collection.updateOne(
+          { news_id: parseInt(req.params.news_id) },
+          { $inc: { upvotes: 1 } }
+        );
+        const result2 = await votesCollection.updateOne(
+          { news_id: parseInt(req.params.news_id),
+            user_id: user_id, },
+          { $set: { vote: "none" } }
+        );
+        res.send(`upvote`);
+      }
+
+      if (find && find.vote === "none") {
+        console.log("none")
+        const result = await collection.updateOne(
+          { news_id: parseInt(req.params.news_id) },
+          { $inc: { upvotes: 1 } }
+        );
+        const result2 = await votesCollection.updateOne(
+          { news_id: parseInt(req.params.news_id),
+            user_id: user_id, },
+          { $set: { vote: "upvote" } }
+        );
+        res.send(`upvote`);
+      }
+
+      if (find && find.vote === "upvote") {
+        res.send(`none`);
+        console.log("no vote needed");
+      }
+      
     });
 
-    app.get("/api/data/:news_id/downvote", async (req, res) => {
+
+    app.post("/api/data/:news_id/downvote", async (req, res) => {
       const news_id = req.params.news_id;
+      const user_id = req.body.user_id;
       const collection = db.collection(collectionName);
+      const votesCollection = db.collection("votes");
+
+      //console.log(req.params.news_id);
 
       // Find the post with the given news_id and increment its upvotes by 1
-      const result = await collection.updateOne(
-        { news_id: parseInt(req.params.news_id) },
-        { $inc: { upvotes: -1 } }
-      );
+      const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
 
-      console.log(`Matched ${result.matchedCount} documents`);
-      console.log(`Modified ${result.modifiedCount} documents`);
+      if (!find) {
+        try {
+          console.log("not found");
+          const result = await collection.updateOne(
+            { news_id: parseInt(req.params.news_id) },
+            { $inc: { downvotes: 1 } }
+          );
+          const result2 = await votesCollection.insertOne({
+            news_id: parseInt(req.params.news_id),
+            user_id: user_id,
+            vote: "downvote",
+          });
+        } catch (error) {
+          console.log(error);
+        }
+        res.send(`downvote`);
+      }
 
-      res.send(`Post ${news_id} upvoted successfully`);
+      if (find && find.vote === "upvote") {
+        console.log("upvote")
+        const result = await collection.updateOne(
+          { news_id: parseInt(req.params.news_id) },
+          { $inc: { downvotes: 1 } }
+        );
+        const result2 = await votesCollection.updateOne(
+          { news_id: parseInt(req.params.news_id),
+            user_id: user_id, },
+          { $set: { vote: "none" } }
+        );
+        res.send(`downvote`);
+      }
+
+      if (find && find.vote === "none") {
+        console.log("none")
+        const result = await collection.updateOne(
+          { news_id: parseInt(req.params.news_id) },
+          { $inc: { downvotes: 1 } }
+        );
+        const result2 = await votesCollection.updateOne(
+          { news_id: parseInt(req.params.news_id),
+            user_id: user_id, },
+          { $set: { vote: "downvote" } }
+        );
+        res.send(`downvote`);
+      }
+
+      if (find && find.vote === "downvote") {
+        console.log("no vote needed");
+        res.send(`none`);
+      }
     });
 
     app.listen(port, () => {
