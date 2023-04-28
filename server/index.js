@@ -103,11 +103,21 @@ async function startServer() {
       res.json(posts);
     });
 
+    const upvoteTimestamps = {};
+
     app.post("/api/data/:news_id/upvote", async (req, res) => {
       const news_id = req.params.news_id;
       const user_id = req.body.user_id;
       const collection = db.collection(collectionName);
       const votesCollection = db.collection("votes");
+
+      // get the timestamp of the last vote for this user and post
+      const lastVoteTimestamp = upvoteTimestamps[`${user_id}-${news_id}`] || 0;
+
+      // if the last vote was less than 2 seconds ago, return an error
+      if (Date.now() - lastVoteTimestamp < 2000) {
+        return res.status(429).send("Please wait at least 2 seconds before voting again.");
+      }
 
       //console.log(req.params.news_id);
 
@@ -167,12 +177,22 @@ async function startServer() {
       
     });
 
+    const downvoteTimestamps = {};
+
 
     app.post("/api/data/:news_id/downvote", async (req, res) => {
       const news_id = req.params.news_id;
       const user_id = req.body.user_id;
       const collection = db.collection(collectionName);
       const votesCollection = db.collection("votes");
+
+      // get the timestamp of the last vote for this user and post
+      const lastVoteTimestamp = downvoteTimestamps[`${user_id}-${news_id}`] || 0;
+
+      // if the last vote was less than 2 seconds ago, return an error
+      if (Date.now() - lastVoteTimestamp < 2000) {
+        return res.status(429).send("Please wait at least 2 seconds before voting again.");
+      }
 
       //console.log(req.params.news_id);
 
