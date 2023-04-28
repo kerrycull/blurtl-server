@@ -157,7 +157,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "none" } }
         );
-        res.send(`upvote`);
+        res.send(`upvote2`);
       }
 
       if (find && find.vote === "none") {
@@ -171,7 +171,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "upvote" } }
         );
-        res.send(`upvote2`);
+        res.send(`upvote`);
       }
 
       if (find && find.vote === "upvote") {
@@ -237,7 +237,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "none" } }
         );
-        res.send(`downvote`);
+        res.send(`downvote2`);
       }
 
       if (find && find.vote === "none") {
@@ -251,7 +251,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "downvote" } }
         );
-        res.send(`downvote2`);
+        res.send(`downvote`);
       }
 
       if (find && find.vote === "downvote") {
