@@ -171,7 +171,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "upvote" } }
         );
-        res.send(`upvote`);
+        res.send(`upvote2`);
       }
 
       if (find && find.vote === "upvote") {
@@ -251,7 +251,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "downvote" } }
         );
-        res.send(`downvote`);
+        res.send(`downvote2`);
       }
 
       if (find && find.vote === "downvote") {
