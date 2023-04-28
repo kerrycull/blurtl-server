@@ -203,7 +203,7 @@ async function startServer() {
       }
 
       // downvote the last upvote time for the user
-      lastDownvoteTime.set(user_id, new Date().getTime();
+      lastDownvoteTime.set(user_id, new Date().getTime());
 
       // Find the post with the given news_id and increment its upvotes by 1
       const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
