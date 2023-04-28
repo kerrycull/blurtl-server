@@ -103,7 +103,7 @@ async function startServer() {
       res.json(posts);
     });
 
-    const upvoteTimestamps = {};
+    const lastUpvoteTime = new Map(); 
 
     app.post("/api/data/:news_id/upvote", async (req, res) => {
       const news_id = req.params.news_id;
@@ -111,15 +111,19 @@ async function startServer() {
       const collection = db.collection(collectionName);
       const votesCollection = db.collection("votes");
 
-      // get the timestamp of the last vote for this user and post
-      const lastVoteTimestamp = upvoteTimestamps[`${user_id}-${news_id}`] || 0;
+      // check if the user has made an upvote within the last 2 seconds
+      if (lastUpvoteTime.has(user_id)) {
+        const lastTime = lastUpvoteTime.get(user_id);
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - lastTime;
 
-      // if the last vote was less than 2 seconds ago, return an error
-      if (Date.now() - lastVoteTimestamp < 2000) {
-        return res.status(429).send("Please wait at least 2 seconds before voting again.");
+      if (timeDiff < 2000) { // return an error response if the user made an upvote within the last 2 seconds
+          return res.status(429).send("Please wait 2 seconds before upvoting again.");
+        }
       }
 
-      //console.log(req.params.news_id);
+      // update the last upvote time for the user
+      lastUpvoteTime.set(user_id, new Date().getTime());
 
       // Find the post with the given news_id and increment its upvotes by 1
       const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
@@ -177,8 +181,7 @@ async function startServer() {
       
     });
 
-    const downvoteTimestamps = {};
-
+    const lastDownvoteTime = new Map(); 
 
     app.post("/api/data/:news_id/downvote", async (req, res) => {
       const news_id = req.params.news_id;
@@ -186,15 +189,21 @@ async function startServer() {
       const collection = db.collection(collectionName);
       const votesCollection = db.collection("votes");
 
-      // get the timestamp of the last vote for this user and post
-      const lastVoteTimestamp = downvoteTimestamps[`${user_id}-${news_id}`] || 0;
 
-      // if the last vote was less than 2 seconds ago, return an error
-      if (Date.now() - lastVoteTimestamp < 2000) {
-        return res.status(429).send("Please wait at least 2 seconds before voting again.");
+
+      // check if the user has made an upvote within the last 2 seconds
+      if (lastDownvoteTime.has(user_id)) {
+        const lastTime = lastDownvoteTime.get(user_id);
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - lastTime;
+
+      if (timeDiff < 2000) { // return an error response if the user made an downvote within the last 2 seconds
+          return res.status(429).send("Please wait 2 seconds before downvoting again.");
+        }
       }
 
-      //console.log(req.params.news_id);
+      // downvote the last upvote time for the user
+      lastDownvoteTime.set(user_id, new Date().getTime();
 
       // Find the post with the given news_id and increment its upvotes by 1
       const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
