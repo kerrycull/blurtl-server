@@ -10,6 +10,8 @@ app.use(express.json());
 app.use(require("./routes/record"));
 const { MongoClient } = require("mongodb");
 
+// test
+
 const url =
   "mongodb+srv://k2:1234@cluster0.btpzlek.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
