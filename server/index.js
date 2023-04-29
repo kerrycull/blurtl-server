@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(require("./routes/record"));
 const { MongoClient } = require("mongodb");
 
-const crypto_api = process.env.CRYPTO;
+const crypto_api = process.env.CRYPTO_API;
 
 const url =
   process.env.ATLAS_URI;
