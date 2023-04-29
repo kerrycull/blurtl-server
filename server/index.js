@@ -103,12 +103,6 @@ async function startServer() {
       res.json(posts);
     });
     
-    app.get("/api/data/:news_id/votes", async (req, res) => {
-      const votesCollection = db.collection("votes");
-      const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
-      res.json(find);
-    });
-
     const lastUpvoteTime = new Map(); 
 
     app.post("/api/data/:news_id/upvote", async (req, res) => {
