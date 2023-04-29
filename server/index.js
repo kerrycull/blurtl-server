@@ -102,6 +102,12 @@ async function startServer() {
         .toArray();
       res.json(posts);
     });
+    
+    app.get("/api/data/:news_id/votes", async (req, res) => {
+      const votesCollection = db.collection("votes");
+      const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
+      res.json(find);
+    });
 
     const lastUpvoteTime = new Map(); 
 
@@ -157,7 +163,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "none" } }
         );
-        res.send(`upvote2`);
+        res.send(`find`);
       }
 
       if (find && find.vote === "none") {
