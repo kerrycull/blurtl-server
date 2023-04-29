@@ -163,7 +163,7 @@ async function startServer() {
             user_id: user_id, },
           { $set: { vote: "none" } }
         );
-        res.send(`find`);
+        res.send(`upvote2`);
       }
 
       if (find && find.vote === "none") {
