@@ -10,10 +10,10 @@ app.use(express.json());
 app.use(require("./routes/record"));
 const { MongoClient } = require("mongodb");
 
-// test
+const crypto_api = process.env.CRYPTO;
 
 const url =
-  "mongodb+srv://k2:1234@cluster0.btpzlek.mongodb.net/?retryWrites=true&w=majority";
+  process.env.ATLAS_URI;
 const client = new MongoClient(url);
 const dbName = "blurtl";
 const collectionName = "posts";
@@ -22,7 +22,7 @@ async function fetchAndSaveNewPosts(db) {
   console.log("Fetching new posts from API...");
   try {
     const response = await axios.get(
-      "https://cryptonews-api.com/api/v1/category?section=general&items=50&extra-fields=id&page=1&token=5ouww0nypihcbvkubvklapfqvqwh4d3ibeniydyv"
+      crypto_api
     );
     const newPosts = response.data.data;
 
