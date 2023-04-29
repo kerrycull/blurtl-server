@@ -103,6 +103,22 @@ async function startServer() {
       res.json(posts);
     });
     
+    app.post("/api/data/:news_id/votes", async (req, res) => {
+      const news_id = req.params.news_id;
+      const user_id = req.body.user_id;
+      const votesCollection = db.collection("votes");
+
+      // Find the post with the given news_id and increment its upvotes by 1
+      const find = await votesCollection.findOne({ news_id: parseInt(req.params.news_id), user_id: user_id});
+
+      if (find) {
+        res.send(find.vote)
+      } else {
+        res.send("none");
+      }
+      
+    });
+
     const lastUpvoteTime = new Map(); 
 
     app.post("/api/data/:news_id/upvote", async (req, res) => {
