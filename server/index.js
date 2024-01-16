@@ -41,6 +41,9 @@ async function fetchAndSaveNewPosts(db) {
           upvotes: 0,
           downvotes: 0,
           date: new Date(),
+          image: post.image_url,
+          sentiment: post.sentiment,
+          source: post.source_name
         });
         console.log(`Inserted new post with id ${post.news_id}`);
       }
